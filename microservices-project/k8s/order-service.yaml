@@ -16,7 +16,7 @@ spec:
       serviceAccountName: order-service-sa
       containers:
         - name: order-service
-          image: 111111111111.dkr.ecr.us-east-1.amazonaws.com/order-service:latest
+          image: docker.io/livinesh01/order-service:latest
           ports:
             - containerPort: 8000
           envFrom:

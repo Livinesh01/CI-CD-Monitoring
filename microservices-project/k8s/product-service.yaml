@@ -16,7 +16,7 @@ spec:
       serviceAccountName: product-service-sa
       containers:
         - name: product-service
-          image: 111111111111.dkr.ecr.us-east-1.amazonaws.com/product-service:latest
+          image: docker.io/livinesh01/product-service:latest
           ports:
             - containerPort: 8000
           envFrom:
