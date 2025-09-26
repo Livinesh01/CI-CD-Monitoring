@@ -40,7 +40,7 @@ jobs:
       # 4. Build and push Docker images to Docker Hub
       - name: Build and push Docker images
         run: |
-          services=("user-service" "product-service" "order-service")
+          services=("User-service" "Product-service" "Order-service")
           for service in "${services[@]}"; do
             docker build -t $DOCKERHUB_USERNAME/$service:latest ./$service
             docker push $DOCKERHUB_USERNAME/$service:latest
@@ -62,9 +62,9 @@ jobs:
       # 7. Deploy to EKS
       - name: Deploy services to EKS
         run: |
-          kubectl apply -f k8s/user-service.yaml
-          kubectl apply -f k8s/product-service.yaml
-          kubectl apply -f k8s/order-service.yaml
+          kubectl apply -f k8s/User-service.yaml
+          kubectl apply -f k8s/Product-service.yaml
+          kubectl apply -f k8s/Order-service.yaml
 
       # 8. Verify deployment
       - name: Get pods and services
