@@ -22,7 +22,7 @@ receivers:
         text: >-
           {{ range .Alerts }}*{{ .Annotations.summary }}*\n{{ .Annotations.description }}\nLabels: {{ .Labels }}\n{{ end }}
     email_configs:
-      - to: 'oncall@example.com'             # CHANGE
+      - to: 'livineshlivitha@gmail.com'
         send_resolved: true
 
 
