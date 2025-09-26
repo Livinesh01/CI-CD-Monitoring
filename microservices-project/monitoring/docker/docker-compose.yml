@@ -1,6 +1,17 @@
 version: "3.8"
 
 services:
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager/config.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - monitoring
   prometheus:
     image: prom/prometheus:v2.54.1
     container_name: prometheus
@@ -14,6 +25,8 @@ services:
       - "9090:9090"
     networks:
       - monitoring
+    depends_on:
+      - alertmanager
 
   loki:
     image: grafana/loki:2.9.8
@@ -44,6 +57,7 @@ services:
     image: grafana/grafana:10.4.6
     container_name: grafana
     environment:
+      - GF_SECURITY_ADMIN_USER=livinesh01
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana-data:/var/lib/grafana

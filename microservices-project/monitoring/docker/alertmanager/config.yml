@@ -1,0 +1,28 @@
+global:
+  resolve_timeout: 5m
+  smtp_smarthost: 'smtp.example.com:587'        # CHANGE
+  smtp_from: 'alerts@example.com'               # CHANGE
+  smtp_auth_username: 'user@example.com'        # CHANGE
+  smtp_auth_password: 'CHANGE_ME'               # CHANGE
+
+route:
+  receiver: 'slack-and-email'
+  group_by: ['alertname','job']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+
+receivers:
+  - name: 'slack-and-email'
+    slack_configs:
+      - api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'  # CHANGE
+        channel: '#alerts'                                       # CHANGE
+        send_resolved: true
+        title: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}'
+        text: >-
+          {{ range .Alerts }}*{{ .Annotations.summary }}*\n{{ .Annotations.description }}\nLabels: {{ .Labels }}\n{{ end }}
+    email_configs:
+      - to: 'oncall@example.com'             # CHANGE
+        send_resolved: true
+
+

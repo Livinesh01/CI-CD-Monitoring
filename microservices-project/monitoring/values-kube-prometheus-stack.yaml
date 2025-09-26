@@ -31,6 +31,9 @@ prometheus:
       limits:
         cpu: 500m
         memory: 1Gi
+    ruleSelectorNilUsesHelmValues: false
+    ruleNamespaceSelector: {}
+    additionalScrapeConfigs: []
 
 alertmanager:
   enabled: true
@@ -42,4 +45,43 @@ alertmanager:
       limits:
         cpu: 300m
         memory: 512Mi
+  config:
+    global:
+      resolve_timeout: 5m
+      smtp_smarthost: 'smtp.example.com:587'
+      smtp_from: 'alerts@example.com'
+      smtp_auth_username: 'user@example.com'
+      smtp_auth_password: 'CHANGE_ME'
+    route:
+      receiver: 'slack-and-email'
+      group_by: ['alertname','job']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+    receivers:
+      - name: 'slack-and-email'
+        slack_configs:
+          - api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'
+            channel: '#alerts'
+            send_resolved: true
+            title: '[{{ .Status | toUpper }}] {{ .CommonLabels.alertname }}'
+            text: >-
+              {{ range .Alerts }}*{{ .Annotations.summary }}*\n{{ .Annotations.description }}\nLabels: {{ .Labels }}\n{{ end }}
+        email_configs:
+          - to: 'oncall@example.com'
+            send_resolved: true
+
+additionalPrometheusRulesMap:
+  basic-rules:
+    groups:
+      - name: instance-health
+        rules:
+          - alert: InstanceDown
+            expr: up == 0
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: Instance down
+              description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes.'
 
