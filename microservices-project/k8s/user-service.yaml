@@ -1,4 +1,49 @@
-containers:
-  - name: user-service
-    image: livinesh01/.0
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  namespace: micro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      serviceAccountName: user-service-sa
+      containers:
+        - name: user-service
+          image: 111111111111.dkr.ecr.us-east-1.amazonaws.com/user-service:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: common-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-service
+  namespace: micro
+spec:
+  selector:
+    app: user-service
+  ports:
+    - port: 80
+      targetPort: 8000
 
