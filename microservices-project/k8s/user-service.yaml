@@ -1,0 +1,4 @@
+containers:
+  - name: user-service
+    image: livinesh01/.0
+
